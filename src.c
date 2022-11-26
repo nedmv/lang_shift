@@ -614,6 +614,8 @@ bool lang_shift_process_english_modifiers(Key key, keyrecord_t* record) {
 }
 
 bool lang_shift_process_record(Key key, keyrecord_t* record) {
+
+
   // Обрабатываем Once Shift
   shift_once_process(key, record);
 
@@ -630,6 +632,9 @@ bool lang_shift_process_record(Key key, keyrecord_t* record) {
   // Это нужно отдельно от обработки языка, чтобы шифт мог выключаться для обычных клавиш
   Key key2 = shift_process(key_to_shift, down);
   if (key2 != NONE_KEY) {
+  #ifdef CAPS_WORD_ENABLE
+    lang_shift_process_caps_word(key);
+  #endif
     if (down) {
       register_code(key2);
     } else {
@@ -654,3 +659,56 @@ void lang_shift_user_timer(void) {
 	shift_once_user_timer();
 	lang_user_timer();
 }
+
+#ifdef CAPS_WORD_ENABLE
+void lang_shift_process_caps_word(Key key) {
+  if (is_caps_word_on()) {
+    switch (key) {
+      //применяем Shift и продолжаем Caps Word
+      case EN_Q ... EN_S_P:
+      case EN_A ... EN_S_L:
+      case EN_Z ... EN_S_M:
+      case RU_JO ... RU_S_JO:
+      case RU_J ... RU_S_E:
+      case RU_JA ... RU_S_JU:
+      case EN_MINS:
+      case RU_MINS:
+      case AG_MINS:
+        //shift_once_process_key(lang_get_shift_layer_number(), true);
+        add_weak_mods(MOD_BIT(KC_LSFT));
+      //продолжаем Caps Word без применения Shift
+      case EN_1:
+      case EN_2:
+      case EN_3:
+      case EN_4:
+      case EN_5:
+      case EN_6:
+      case EN_7:
+      case EN_8:
+      case EN_9:
+      case EN_0:
+      case EN_UNDS:
+      case RU_1:
+      case RU_2:
+      case RU_3:
+      case RU_4:
+      case RU_5:
+      case RU_6:
+      case RU_7:
+      case RU_8:
+      case RU_9:
+      case RU_0:
+      case RU_UNDS:
+      case AG_1 ... AG_0:
+      case AG_UNDS:
+        #if CAPS_WORD_IDLE_TIMEOUT > 0
+            caps_word_reset_idle_timer();
+        #endif // CAPS_WORD_IDLE_TIMEOUT > 0
+        break;
+      //отключаем Caps Word
+      default:
+        caps_word_off();
+    }
+  }
+}
+#endif

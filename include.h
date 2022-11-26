@@ -331,5 +331,9 @@ void lang_shift_tap_key(Key key);
 bool lang_shift_process_record(Key key, keyrecord_t* record);
 void lang_shift_user_timer(void);
 
+#ifdef CAPS_WORD_ENABLE
+void lang_shift_process_caps_word(Key key);
+#endif
+
 // Инклюжу код напрямую, потому что нельзя сделать линковку, ведь код внутри использует кейкоды отсюда, и обязательно нужно это делать через safe_range
 #include "src.c"
