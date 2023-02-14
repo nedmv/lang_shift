@@ -2,6 +2,9 @@
 //                               Работа с шифтом
 // ---------------------------------------------------------------------------
 
+#define KC_LSHIFT KC_LEFT_SHIFT
+#define KC_LCTRL KC_LEFT_CTRL
+
 Shift shift_should_be = 0;
 Shift shift_current = 0;
 uint32_t shift_timer = 0;
